@@ -1,0 +1,65 @@
+// Package ailint provides the AILint GitHub Action for use in CI workflows.
+//
+// Usage in GitHub Actions:
+//
+//	- name: Run AILint
+//	  uses: SidharthSasikumar/ailint@v1
+//	  with:
+//	    path: '.'
+//	    format: 'sarif'
+//	    config: '.ailint.yaml'
+name: 'AILint - AI Code Safety Net'
+description: 'Catch the bugs AI coding tools introduce into your codebase'
+author: 'Sidharth Sasikumar'
+
+inputs:
+  path:
+    description: 'Path to scan'
+    required: false
+    default: '.'
+  format:
+    description: 'Output format: terminal, json, sarif'
+    required: false
+    default: 'terminal'
+  config:
+    description: 'Path to .ailint.yaml config file'
+    required: false
+    default: '.ailint.yaml'
+  version:
+    description: 'AILint version to use'
+    required: false
+    default: 'latest'
+
+outputs:
+  trust-score:
+    description: 'Trust score (0-100)'
+  findings-count:
+    description: 'Total number of findings'
+  exit-code:
+    description: 'Exit code (0 = pass, 1 = fail)'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install AILint
+      shell: bash
+      run: |
+        VERSION="${{ inputs.version }}"
+        if [ "$VERSION" = "latest" ]; then
+          go install github.com/SidharthSasikumar/ailint/cmd/ailint@latest
+        else
+          go install github.com/SidharthSasikumar/ailint/cmd/ailint@v${VERSION}
+        fi
+
+    - name: Run AILint
+      shell: bash
+      run: |
+        ailint \
+          -config "${{ inputs.config }}" \
+          -format "${{ inputs.format }}" \
+          -no-color \
+          "${{ inputs.path }}"
+
+branding:
+  icon: 'shield'
+  color: 'blue'

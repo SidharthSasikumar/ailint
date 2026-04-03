@@ -1,0 +1,67 @@
+# AILint configuration
+# https://github.com/SidharthSasikumar/ailint
+version: 1
+
+rules:
+  phantom-imports:
+    enabled: true
+    severity: error
+    languages: [go, python, javascript]
+
+  secret-leaks:
+    enabled: true
+    severity: error
+    entropy_threshold: 4.5
+    patterns:
+      - aws_access_key
+      - aws_secret_key
+      - github_token
+      - generic_api_key
+      - private_key
+      - slack_token
+      - google_api_key
+      - jwt_token
+
+  stale-patterns:
+    enabled: true
+    severity: warning
+
+  zombie-apis:
+    enabled: false
+    severity: warning
+
+  convention-drift:
+    enabled: false
+    severity: info
+
+  license-risk:
+    enabled: false
+    severity: warning
+
+  complexity-bombs:
+    enabled: false
+    severity: info
+
+output:
+  format: terminal    # terminal, json, sarif
+  color: true
+  verbose: false
+
+scan:
+  paths:
+    - .
+  exclude:
+    - vendor/
+    - node_modules/
+    - .git/
+    - dist/
+    - build/
+    - "*.test.*"
+    - "*_test.go"
+  diff_only: false
+
+trust_score:
+  enabled: true
+  thresholds:
+    pass: 80
+    warn: 60

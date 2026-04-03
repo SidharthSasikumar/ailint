@@ -1,0 +1,46 @@
+version: 2
+
+builds:
+  - main: ./cmd/ailint
+    binary: ailint
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.buildTime={{.Date}}
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - '^chore:'
+
+brews:
+  - repository:
+      owner: SidharthSasikumar
+      name: homebrew-tap
+    homepage: "https://github.com/SidharthSasikumar/ailint"
+    description: "Catch the bugs AI coding tools introduce into your codebase"
+    license: "MIT"

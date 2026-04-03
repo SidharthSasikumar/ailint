@@ -1,0 +1,19 @@
+# Binaries
+bin/
+dist/
+ailint
+
+# Coverage
+coverage.out
+*.coverprofile
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
