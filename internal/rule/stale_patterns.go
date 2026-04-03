@@ -8,11 +8,10 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// StalePatterns flags deprecated APIs and patterns that AI tools generate
-// from outdated training data.
+// StalePatterns flags usage of deprecated APIs.
 type StalePatterns struct{}
 
-// NewStalePatterns creates a StalePatterns rule.
+// NewStalePatterns returns a configured StalePatterns rule.
 func NewStalePatterns() *StalePatterns {
 	return &StalePatterns{}
 }
@@ -22,7 +21,7 @@ func (r *StalePatterns) Name() string                    { return "Stale Pattern
 func (r *StalePatterns) DefaultSeverity() types.Severity { return types.SeverityWarning }
 func (r *StalePatterns) Languages() []string             { return nil } // All languages
 func (r *StalePatterns) Description() string {
-	return "Flags deprecated APIs and patterns from AI's outdated training data"
+	return "Flags deprecated APIs that have standard replacements"
 }
 
 func (r *StalePatterns) Check(ctx context.Context, file *types.FileContext) ([]types.Finding, error) {
@@ -62,9 +61,7 @@ type deprecatedAPI struct {
 	since       string
 }
 
-// deprecatedAPIs is the embedded database of known deprecated APIs.
-// AI tools frequently generate code using these because their training data
-// includes older code and documentation.
+// deprecatedAPIs is the database of known deprecated APIs and their replacements.
 var deprecatedAPIs = []deprecatedAPI{
 	// ── Go ──────────────────────────────────────────────
 	{

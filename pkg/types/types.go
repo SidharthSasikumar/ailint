@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Severity represents the severity level of a finding.
+// Severity levels for findings.
 type Severity int
 
 const (
@@ -31,7 +31,7 @@ func (s Severity) MarshalText() ([]byte, error) {
 	return []byte(s.String()), nil
 }
 
-// Finding represents a single lint finding.
+// Finding is a single lint result.
 type Finding struct {
 	RuleID     string   `json:"rule_id"`
 	RuleName   string   `json:"rule_name"`
@@ -49,7 +49,7 @@ func (f Finding) String() string {
 	return fmt.Sprintf("%s:%d:%d: [%s] %s: %s", f.File, f.Line, f.Column, f.Severity, f.RuleID, f.Message)
 }
 
-// FileContext represents a file being analyzed.
+// FileContext holds content and metadata for a file under analysis.
 type FileContext struct {
 	Path     string
 	Content  []byte
@@ -57,7 +57,7 @@ type FileContext struct {
 	Lines    []string
 }
 
-// NewFileContext creates a FileContext from path and content.
+// NewFileContext splits content into lines and sets the language.
 func NewFileContext(path string, content []byte, language string) *FileContext {
 	return &FileContext{
 		Path:     path,
@@ -67,7 +67,7 @@ func NewFileContext(path string, content []byte, language string) *FileContext {
 	}
 }
 
-// Import represents a parsed import statement.
+// Import is a parsed import statement.
 type Import struct {
 	Path  string // Full import path (e.g., "fmt", "github.com/pkg/errors")
 	Alias string // Import alias, if any
@@ -75,7 +75,7 @@ type Import struct {
 	Name  string // Short name (last segment of path)
 }
 
-// APICall represents a parsed API/function call.
+// APICall is a parsed function/method call (used by future rules).
 type APICall struct {
 	Package  string
 	Function string
@@ -84,7 +84,7 @@ type APICall struct {
 	Raw      string
 }
 
-// TrustScore represents the confidence score for analyzed code.
+// TrustScore summarizes the overall scan result.
 type TrustScore struct {
 	Score    int    `json:"score"`
 	MaxScore int    `json:"max_score"`
@@ -94,7 +94,7 @@ type TrustScore struct {
 	Grade    string `json:"grade"`
 }
 
-// CalculateTrustScore computes a trust score from findings.
+// CalculateTrustScore derives a 0-100 score from findings.
 func CalculateTrustScore(findings []Finding) TrustScore {
 	ts := TrustScore{Score: 100, MaxScore: 100}
 	for _, f := range findings {
@@ -128,7 +128,7 @@ func CalculateTrustScore(findings []Finding) TrustScore {
 	return ts
 }
 
-// Result represents the complete output of an analysis run.
+// Result is the complete output of an analysis run.
 type Result struct {
 	Findings     []Finding  `json:"findings"`
 	TrustScore   TrustScore `json:"trust_score"`

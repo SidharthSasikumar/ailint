@@ -10,8 +10,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// SecretLeaks catches hardcoded credentials and secrets that AI tools
-// generate as "examples" — using both pattern matching and entropy analysis.
+// SecretLeaks detects hardcoded credentials via pattern matching and entropy analysis.
 type SecretLeaks struct {
 	entropyThreshold float64
 	patterns         []*secretPattern
@@ -23,7 +22,7 @@ type secretPattern struct {
 	message string
 }
 
-// NewSecretLeaks creates a SecretLeaks rule with the given entropy threshold.
+// NewSecretLeaks returns a configured SecretLeaks rule.
 func NewSecretLeaks(entropyThreshold float64) *SecretLeaks {
 	if entropyThreshold <= 0 {
 		entropyThreshold = 4.5
@@ -39,7 +38,7 @@ func (r *SecretLeaks) Name() string                    { return "Secret Leaks" }
 func (r *SecretLeaks) DefaultSeverity() types.Severity { return types.SeverityError }
 func (r *SecretLeaks) Languages() []string             { return nil } // All languages
 func (r *SecretLeaks) Description() string {
-	return "Catches hardcoded credentials and secrets that AI tools generate as examples"
+	return "Detects hardcoded credentials, API keys, and high-entropy secrets"
 }
 
 func (r *SecretLeaks) Check(ctx context.Context, file *types.FileContext) ([]types.Finding, error) {
@@ -65,7 +64,7 @@ func (r *SecretLeaks) Check(ctx context.Context, file *types.FileContext) ([]typ
 					Line:       lineNum,
 					Column:     1,
 					Message:    p.message,
-					Suggestion: "Use environment variables or a secrets manager instead of hardcoded values.",
+					Suggestion: "Use environment variables or a secrets manager.",
 				})
 			}
 		}
@@ -79,7 +78,7 @@ func (r *SecretLeaks) Check(ctx context.Context, file *types.FileContext) ([]typ
 	return r.deduplicate(findings), nil
 }
 
-// checkEntropy looks for high-entropy strings in secret-like variable assignments.
+// checkEntropy flags high-entropy strings in secret-like assignments.
 func (r *SecretLeaks) checkEntropy(filePath, line string, lineNum int) *types.Finding {
 	m := secretAssignment.FindStringSubmatch(line)
 	if m == nil {
@@ -111,13 +110,13 @@ func (r *SecretLeaks) checkEntropy(filePath, line string, lineNum int) *types.Fi
 			Message: fmt.Sprintf(
 				"Potential hardcoded secret detected (entropy: %.1f, threshold: %.1f)",
 				entropy, r.entropyThreshold),
-			Suggestion: "Use environment variables or a secrets manager. AI tools often generate realistic-looking credentials that get committed.",
+			Suggestion: "Use environment variables or a secrets manager.",
 		}
 	}
 	return nil
 }
 
-// deduplicate removes findings that flag the same line for both pattern and entropy.
+// deduplicate keeps only the first finding per line.
 func (r *SecretLeaks) deduplicate(findings []types.Finding) []types.Finding {
 	seen := map[string]bool{}
 	var result []types.Finding
@@ -135,7 +134,7 @@ var secretAssignment = regexp.MustCompile(
 	`(?i)(?:password|passwd|pwd|secret|token|api[_-]?key|apikey|auth[_-]?token|credential|private[_-]?key|access[_-]?key)` +
 		`\s*[:=]\s*["']([^"']{8,})["']`)
 
-// shannonEntropy calculates the Shannon entropy of a string in bits.
+// shannonEntropy returns the Shannon entropy of s in bits.
 func shannonEntropy(s string) float64 {
 	if len(s) == 0 {
 		return 0

@@ -7,7 +7,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// JSONReporter outputs results as JSON.
+// JSONReporter writes results as JSON.
 type JSONReporter struct{}
 
 func (r *JSONReporter) Format() string { return "json" }

@@ -6,11 +6,8 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// Reporter formats analysis results for output.
+// Reporter writes analysis results to an output stream.
 type Reporter interface {
-	// Format returns the output format name.
 	Format() string
-
-	// Report writes the formatted results to the writer.
 	Report(result *types.Result, w io.Writer) error
 }

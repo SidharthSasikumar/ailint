@@ -1,13 +1,3 @@
-// Package ailint provides the AILint GitHub Action for use in CI workflows.
-//
-// Usage in GitHub Actions:
-//
-//	- name: Run AILint
-//	  uses: SidharthSasikumar/ailint@v1
-//	  with:
-//	    path: '.'
-//	    format: 'sarif'
-//	    config: '.ailint.yaml'
 name: 'AILint - AI Code Safety Net'
 description: 'Catch the bugs AI coding tools introduce into your codebase'
 author: 'Sidharth Sasikumar'

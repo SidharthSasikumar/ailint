@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Config represents the complete AILint configuration.
+// Config holds the complete ailint configuration.
 type Config struct {
 	Version int          `yaml:"version"`
 	Rules   RulesConfig  `yaml:"rules"`
@@ -16,7 +16,7 @@ type Config struct {
 	Trust   TrustConfig  `yaml:"trust_score"`
 }
 
-// RulesConfig holds configuration for all rules.
+// RulesConfig groups per-rule configuration.
 type RulesConfig struct {
 	PhantomImports  RuleConfig        `yaml:"phantom-imports"`
 	SecretLeaks     SecretLeaksConfig `yaml:"secret-leaks"`
@@ -27,47 +27,47 @@ type RulesConfig struct {
 	ComplexityBombs RuleConfig        `yaml:"complexity-bombs"`
 }
 
-// RuleConfig holds common configuration for a single rule.
+// RuleConfig is the common configuration for a rule.
 type RuleConfig struct {
 	Enabled   bool     `yaml:"enabled"`
 	Severity  string   `yaml:"severity"`
 	Languages []string `yaml:"languages,omitempty"`
 }
 
-// SecretLeaksConfig extends RuleConfig with secret-specific options.
+// SecretLeaksConfig adds entropy threshold to RuleConfig.
 type SecretLeaksConfig struct {
 	RuleConfig       `yaml:",inline"`
 	EntropyThreshold float64  `yaml:"entropy_threshold"`
 	Patterns         []string `yaml:"patterns,omitempty"`
 }
 
-// OutputConfig controls how results are displayed.
+// OutputConfig controls output formatting.
 type OutputConfig struct {
 	Format  string `yaml:"format"`
 	Color   bool   `yaml:"color"`
 	Verbose bool   `yaml:"verbose"`
 }
 
-// ScanConfig controls which files are analyzed.
+// ScanConfig controls file discovery.
 type ScanConfig struct {
 	Paths    []string `yaml:"paths"`
 	Exclude  []string `yaml:"exclude"`
 	DiffOnly bool     `yaml:"diff_only"`
 }
 
-// TrustConfig controls trust score behavior.
+// TrustConfig controls trust score thresholds.
 type TrustConfig struct {
 	Enabled    bool            `yaml:"enabled"`
 	Thresholds TrustThresholds `yaml:"thresholds"`
 }
 
-// TrustThresholds defines pass/warn score thresholds.
+// TrustThresholds defines the pass/warn cutoffs.
 type TrustThresholds struct {
 	Pass int `yaml:"pass"`
 	Warn int `yaml:"warn"`
 }
 
-// DefaultConfig returns a Config with sensible defaults.
+// DefaultConfig returns production defaults.
 func DefaultConfig() *Config {
 	return &Config{
 		Version: 1,
@@ -98,7 +98,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// Load reads configuration from the given YAML file, merging with defaults.
+// Load reads a YAML config file, falling back to defaults.
 func Load(path string) (*Config, error) {
 	cfg := DefaultConfig()
 

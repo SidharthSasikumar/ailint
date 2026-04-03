@@ -12,8 +12,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// PhantomImports detects imports of packages that don't exist —
-// a common class of bugs where AI tools hallucinate package names.
+// PhantomImports flags imports that resolve to no known package.
 type PhantomImports struct {
 	goModDeps map[string]bool
 	goModPath string
@@ -24,8 +23,7 @@ type PhantomImports struct {
 	hasJSDeps bool
 }
 
-// NewPhantomImports creates a PhantomImports rule, loading dependency
-// manifests from the given root directory.
+// NewPhantomImports loads dependency manifests from root and returns the rule.
 func NewPhantomImports(rootDir string) *PhantomImports {
 	r := &PhantomImports{
 		goModDeps: make(map[string]bool),
@@ -43,7 +41,7 @@ func (r *PhantomImports) Name() string                    { return "Phantom Impo
 func (r *PhantomImports) DefaultSeverity() types.Severity { return types.SeverityError }
 func (r *PhantomImports) Languages() []string             { return []string{"go", "python", "javascript"} }
 func (r *PhantomImports) Description() string {
-	return "Detects imports of packages/modules that don't exist (AI hallucinated them)"
+	return "Detects imports of packages that don't exist in declared dependencies"
 }
 
 func (r *PhantomImports) Check(ctx context.Context, file *types.FileContext) ([]types.Finding, error) {
@@ -66,7 +64,7 @@ func (r *PhantomImports) Check(ctx context.Context, file *types.FileContext) ([]
 				Column:   1,
 				Message: fmt.Sprintf("Package %q not found in standard library or project dependencies",
 					imp.Path),
-				Suggestion: "Verify this package exists. AI tools sometimes hallucinate package names that look plausible but don't exist.",
+				Suggestion: "Verify this package exists — it may be a hallucinated name.",
 			})
 		}
 	}
@@ -144,7 +142,7 @@ func (r *PhantomImports) isPhantomJS(imp types.Import) bool {
 	return !r.jsDeps[imp.Name]
 }
 
-// loadGoMod parses go.mod to extract the module path and dependencies.
+// loadGoMod extracts module path and dependencies from go.mod.
 func (r *PhantomImports) loadGoMod(root string) {
 	data, err := os.ReadFile(filepath.Join(root, "go.mod"))
 	if err != nil {
@@ -190,7 +188,7 @@ func (r *PhantomImports) loadGoMod(root string) {
 	}
 }
 
-// loadPythonDeps reads requirements.txt and pyproject.toml.
+// loadPythonDeps reads requirements.txt / pyproject.toml.
 func (r *PhantomImports) loadPythonDeps(root string) {
 	// Try requirements.txt
 	if data, err := os.ReadFile(filepath.Join(root, "requirements.txt")); err == nil {
@@ -233,7 +231,7 @@ func (r *PhantomImports) loadPythonDeps(root string) {
 	}
 }
 
-// loadJSDeps reads package.json dependencies.
+// loadJSDeps reads dependencies from package.json.
 func (r *PhantomImports) loadJSDeps(root string) {
 	data, err := os.ReadFile(filepath.Join(root, "package.json"))
 	if err != nil {

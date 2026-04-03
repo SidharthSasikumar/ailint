@@ -7,7 +7,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// SARIFReporter outputs results in SARIF 2.1.0 format for GitHub Code Scanning.
+// SARIFReporter writes SARIF 2.1.0 output for GitHub Code Scanning.
 type SARIFReporter struct {
 	Version string
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// GoParser extracts structured information from Go source files.
+// GoParser handles Go source files.
 type GoParser struct{}
 
 func (p *GoParser) Language() string     { return "go" }
@@ -60,7 +60,7 @@ func lastSegment(path string) string {
 	return parts[len(parts)-1]
 }
 
-// GoStdlib contains Go standard library package paths.
+// GoStdlib lists Go standard library packages.
 var GoStdlib = map[string]bool{
 	"archive/tar": true, "archive/zip": true,
 	"bufio": true, "bytes": true,

@@ -7,7 +7,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// JavaScriptParser extracts structured information from JS/TS source files.
+// JavaScriptParser handles JS/TS source files.
 type JavaScriptParser struct{}
 
 func (p *JavaScriptParser) Language() string { return "javascript" }
@@ -58,7 +58,7 @@ func (p *JavaScriptParser) ParseImports(content []byte) []types.Import {
 	return imports
 }
 
-// jsPackageName extracts the npm package name from an import path.
+// jsPackageName extracts the npm package name from a path.
 func jsPackageName(path string) string {
 	// Scoped packages: @scope/package/sub → @scope/package
 	if strings.HasPrefix(path, "@") {
@@ -72,7 +72,7 @@ func jsPackageName(path string) string {
 	return strings.SplitN(path, "/", 2)[0]
 }
 
-// NodeBuiltins contains Node.js built-in module names.
+// NodeBuiltins lists Node.js built-in modules.
 var NodeBuiltins = map[string]bool{
 	"assert": true, "assert/strict": true, "async_hooks": true,
 	"buffer": true, "child_process": true, "cluster": true,

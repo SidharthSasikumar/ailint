@@ -8,7 +8,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// TerminalReporter outputs results as pretty, human-readable terminal output.
+// TerminalReporter writes human-readable output with optional ANSI colors.
 type TerminalReporter struct {
 	Color bool
 }

@@ -51,7 +51,7 @@ func main() {
 
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, banner)
-		fmt.Fprintf(os.Stderr, "  The missing safety net for AI-generated code\n\n")
+		fmt.Fprintf(os.Stderr, "  Static analysis for AI-generated code\n\n")
 		fmt.Fprintf(os.Stderr, "Usage:\n  ailint [flags] [path]\n\nFlags:\n")
 		flag.PrintDefaults()
 		fmt.Fprintf(os.Stderr, "\nExamples:\n")

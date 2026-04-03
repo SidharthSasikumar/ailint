@@ -1,5 +1,4 @@
 # AILint configuration
-# https://github.com/SidharthSasikumar/ailint
 version: 1
 
 rules:
@@ -59,8 +58,8 @@ scan:
     - bin/
     - "*.test.*"
     - "*_test.go"
-    - internal/rule/stale_patterns.go    # Contains deprecated API database, not actual usage
-    - internal/parser/golang.go          # Contains stdlib package list including deprecated packages
+    - internal/rule/stale_patterns.go    # Rule database, not actual usage
+    - internal/parser/golang.go          # Stdlib list includes deprecated packages
   diff_only: false
 
 trust_score:

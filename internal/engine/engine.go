@@ -9,14 +9,14 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// Engine orchestrates file analysis across rules using a worker pool.
+// Engine runs rules against files using a worker pool.
 type Engine struct {
 	rules    []rule.Rule
 	reporter reporter.Reporter
 	workers  int
 }
 
-// New creates an Engine with the given rules, reporter, and worker count.
+// New returns an Engine configured with the given rules and worker count.
 func New(rules []rule.Rule, rep reporter.Reporter, workers int) *Engine {
 	if workers <= 0 {
 		workers = 4
@@ -28,7 +28,7 @@ func New(rules []rule.Rule, rep reporter.Reporter, workers int) *Engine {
 	}
 }
 
-// Run analyzes all files and returns the aggregated result.
+// Run analyzes files concurrently and returns aggregated findings.
 func (e *Engine) Run(ctx context.Context, files []*types.FileContext) (*types.Result, error) {
 	var (
 		mu       sync.Mutex

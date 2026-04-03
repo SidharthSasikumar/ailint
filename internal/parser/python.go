@@ -7,7 +7,7 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// PythonParser extracts structured information from Python source files.
+// PythonParser handles Python source files.
 type PythonParser struct{}
 
 func (p *PythonParser) Language() string     { return "python" }
@@ -60,7 +60,7 @@ func (p *PythonParser) ParseImports(content []byte) []types.Import {
 	return imports
 }
 
-// PythonStdlib contains Python 3.12+ standard library top-level module names.
+// PythonStdlib lists Python 3.x standard library modules.
 var PythonStdlib = map[string]bool{
 	"__future__": true, "__main__": true, "_thread": true,
 	"abc": true, "aifc": true, "argparse": true, "array": true, "ast": true,

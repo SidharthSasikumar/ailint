@@ -10,13 +10,13 @@ import (
 	"github.com/SidharthSasikumar/ailint/pkg/types"
 )
 
-// Scanner discovers and reads source files for analysis.
+// Scanner walks a directory tree and returns supported source files.
 type Scanner struct {
 	root    string
 	exclude []string
 }
 
-// New creates a Scanner rooted at the given directory.
+// New returns a Scanner for the given root directory.
 func New(root string, exclude []string) *Scanner {
 	return &Scanner{
 		root:    root,
@@ -24,7 +24,7 @@ func New(root string, exclude []string) *Scanner {
 	}
 }
 
-// Scan walks the directory tree and returns FileContexts for all supported files.
+// Scan walks the tree and returns FileContexts for supported files.
 func (s *Scanner) Scan() ([]*types.FileContext, error) {
 	var files []*types.FileContext
 
@@ -69,7 +69,7 @@ func (s *Scanner) Scan() ([]*types.FileContext, error) {
 	return files, err
 }
 
-// isExcluded checks if a path matches any exclusion pattern.
+// isExcluded returns true if the path matches any exclusion pattern.
 func (s *Scanner) isExcluded(relPath string, d fs.DirEntry) bool {
 	for _, pattern := range s.exclude {
 		// Directory pattern (ends with /)
