@@ -56,8 +56,11 @@ scan:
     - .git/
     - dist/
     - build/
+    - bin/
     - "*.test.*"
     - "*_test.go"
+    - internal/rule/stale_patterns.go    # Contains deprecated API database, not actual usage
+    - internal/parser/golang.go          # Contains stdlib package list including deprecated packages
   diff_only: false
 
 trust_score:
