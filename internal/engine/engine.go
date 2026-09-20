@@ -2,6 +2,8 @@ package engine
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/SidharthSasikumar/ailint/internal/reporter"
@@ -33,6 +35,7 @@ func (e *Engine) Run(ctx context.Context, files []*types.FileContext) (*types.Re
 	var (
 		mu       sync.Mutex
 		findings []types.Finding
+		failures []error
 		wg       sync.WaitGroup
 	)
 
@@ -74,6 +77,9 @@ func (e *Engine) Run(ctx context.Context, files []*types.FileContext) (*types.Re
 
 					results, err := r.Check(ctx, file)
 					if err != nil {
+						mu.Lock()
+						failures = append(failures, fmt.Errorf("rule %s failed: %w", r.ID(), err))
+						mu.Unlock()
 						continue
 					}
 
@@ -88,6 +94,12 @@ func (e *Engine) Run(ctx context.Context, files []*types.FileContext) (*types.Re
 	}
 
 	wg.Wait()
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if len(failures) > 0 {
+		return nil, errors.Join(failures...)
+	}
 
 	return &types.Result{
 		Findings:     findings,

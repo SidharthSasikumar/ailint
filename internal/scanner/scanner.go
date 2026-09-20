@@ -30,7 +30,7 @@ func (s *Scanner) Scan() ([]*types.FileContext, error) {
 
 	err := filepath.WalkDir(s.root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return nil // Skip errors, continue walking
+			return err
 		}
 
 		relPath, _ := filepath.Rel(s.root, path)
@@ -46,7 +46,7 @@ func (s *Scanner) Scan() ([]*types.FileContext, error) {
 			return nil
 		}
 
-		if d.IsDir() {
+		if d.IsDir() || d.Type()&os.ModeSymlink != 0 {
 			return nil
 		}
 
@@ -59,7 +59,7 @@ func (s *Scanner) Scan() ([]*types.FileContext, error) {
 
 		content, err := os.ReadFile(path)
 		if err != nil {
-			return nil // Skip unreadable files
+			return err
 		}
 
 		files = append(files, types.NewFileContext(relPath, content, lang))
