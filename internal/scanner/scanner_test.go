@@ -13,7 +13,9 @@ func TestMissingRootFails(t *testing.T) {
 }
 func TestSkipsExternalSymlinks(t *testing.T) {
 	outside := filepath.Join(t.TempDir(), "secret.go")
-	os.WriteFile(outside, []byte("package secret"), 0600)
+	if err := os.WriteFile(outside, []byte("package secret"), 0600); err != nil {
+		t.Fatal(err)
+	}
 	root := t.TempDir()
 	if err := os.Symlink(outside, filepath.Join(root, "linked.go")); err != nil {
 		t.Fatal(err)
